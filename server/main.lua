@@ -1,6 +1,5 @@
-local players   = {}
-
-RPX.Jobs        = Config.Jobs or {}
+registeredPlayers   = {}
+registeredJobs      = Config.Jobs or {}
 
 RPX.UsableItems = {} 
 
@@ -15,18 +14,18 @@ end
 
 RPX.GetPlayers = function()
     local array = {}
-    for k,v in pairs(players) do 
+    for k,v in pairs(registeredPlayers) do 
         array[#array + 1] = v
     end
     return array
 end
 
 RPX.GetPlayerFromId = function(source)
-    return players[source]
+    return registeredPlayers[source]
 end
 
 RPX.GetPlayerFromIdentifier = function(identifier)
-    for k,v in pairs(players) do 
+    for k,v in pairs(registeredPlayers) do 
         if v.identifier == identifier then return v end
     end
 end
@@ -39,11 +38,11 @@ RPX.GetPlayerIdentifier = function(source, key)
 end
 
 RPX.RegisterJob = function(name, data)
-    RPX.Jobs[name] = data
+    registeredJobs[name] = data
 end
 
 function SavePlayer(source, cb)
-    local player = players[source]
+    local player = registeredPlayers[source]
     MySQL.Async.fetchAll("SELECT * FROM players WHERE identifier=?;", { player.identifier }, 
         function(results)
             local dbPlayer = {
@@ -64,7 +63,7 @@ function SavePlayer(source, cb)
 end
 
 function LoadPlayer(source, cb)
-    local player = players[source]
+    local player = registeredPlayers[source]
     if player then return end
     local identifier = RPX.GetPlayerIdentifier(source, "license")
     MySQL.Async.fetchAll("SELECT data, last_updated FROM players WHERE identifier=?;", { identifier }, 
@@ -89,7 +88,7 @@ function LoadPlayer(source, cb)
                     firstJoin   = true
                 }
             end
-            players[source] = PlayerObject(dbPlayer)
+            registeredPlayers[source] = PlayerObject(dbPlayer)
             Inventory.LoadPlayer(source)
             cb()
         end
@@ -99,15 +98,15 @@ end
 /* Test Loading of Players */
 
 MySQL.ready(function() 
-    local source = 2
+    local source = 1
     LoadPlayer(source, function()
         local player = RPX.GetPlayerFromId(source)
         print(player.job.label, player.job.rank_label)
     end)
 end)
 
-if not RPX.Jobs["unemployed"] then 
-    RPX.Jobs["unemployed"] = {
+if not registeredJobs["unemployed"] then 
+    registeredJobs["unemployed"] = {
         label = "Unemployed",
         ranks = {
             {
@@ -115,5 +114,5 @@ if not RPX.Jobs["unemployed"] then
                 salary = 100,
             },
         }
-    },
+    }
 end

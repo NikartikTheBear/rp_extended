@@ -63,7 +63,7 @@ function PerformAnim(ped, dict, anim, settings)
     return
 end
 
-RPX.Game.TaskPlayAnim(ped, dict, anim, settings, cb)
+RPX.Game.TaskPlayAnim = function(ped, dict, anim, settings, cb)
     if not RPX.Game.RequestAnim(dict) then return end
     TaskPlayAnim(ped, dict, anim, table.unpack(settings.flags))
     if cb then 

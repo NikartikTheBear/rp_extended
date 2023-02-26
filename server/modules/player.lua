@@ -6,7 +6,7 @@ function PlayerObject(data)
     player.skin       = data.skin or {}
     player.metadata   = data.metadata or {}
     player.job        = nil
-    player.activeJob  = (RPX.Jobsettings.KeepActiveJob and data.activeJob or nil)
+    player.activeJob  = (Config.JobSettings.KeepActiveJob and data.activeJob or nil)
     player.jobs       = data.jobs or {}
     player.licenses   = data.licenses or {}
     player.groups     = data.groups or {}
@@ -46,7 +46,7 @@ function PlayerObject(data)
     player.SetJobActive = function(name) 
         player.activeJob = name or "unemployed"
         if player.activeJob ~= "unemployed" then 
-            local cfg = RPX.Jobs[player.activeJob]
+            local cfg = registeredJobs[player.activeJob]
             if not cfg then 
                 return false 
             end
@@ -62,7 +62,7 @@ function PlayerObject(data)
                 metadata = player.jobs[player.activeJob].metadata
             }
         else
-            local cfg = RPX.Jobs["unemployed"]
+            local cfg = registeredJobs["unemployed"]
             local rankCfg = cfg.ranks[1]
             player.job = {
                 name = "unemployed",
@@ -77,7 +77,7 @@ function PlayerObject(data)
 
     player.SetJob = function(name, rank, metadata, onduty)
         if not name then return end
-        local cfg = RPX.Jobs[name]
+        local cfg = registeredJobs[name]
         if not cfg then 
             PrintConsole("You do not have the job \"" .. name .. "\" in the config.")
             return 
