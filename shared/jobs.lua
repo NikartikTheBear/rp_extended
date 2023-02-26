@@ -8,13 +8,4 @@ Config.Jobs = {
             },
         }
     },
-    ["police"] = {
-        label = "Police",
-        ranks = {
-            {
-                label = "Officer",
-                salary = 100,
-            },
-        }
-    }
 }

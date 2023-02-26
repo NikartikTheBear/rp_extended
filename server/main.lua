@@ -1,6 +1,8 @@
-local players = {}
+local players   = {}
 
-RPX.UsableItems = {}
+RPX.Jobs        = Config.Jobs or {}
+
+RPX.UsableItems = {} 
 
 RPX.OnItemUsed = function(source, name, ...)
     if not RPX.UsableItems[name] then return end
@@ -34,6 +36,10 @@ RPX.GetPlayerIdentifier = function(source, key)
         local identifier = GetPlayerIdentifier(source, i)
         if string.find(identifier, key) then return identifier end
     end
+end
+
+RPX.RegisterJob = function(name, data)
+    RPX.Jobs[name] = data
 end
 
 function SavePlayer(source, cb)
@@ -99,3 +105,15 @@ MySQL.ready(function()
         print(player.job.label, player.job.rank_label)
     end)
 end)
+
+if not RPX.Jobs["unemployed"] then 
+    RPX.Jobs["unemployed"] = {
+        label = "Unemployed",
+        ranks = {
+            {
+                label = "Unemployed",
+                salary = 100,
+            },
+        }
+    },
+end
