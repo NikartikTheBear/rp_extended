@@ -75,3 +75,11 @@ RPX.Game.TaskPlayAnim = function(ped, dict, anim, settings, cb)
         return PerformAnim(ped, dict, anim, settings)
     end
 end
+
+RPX.Game.RequestStreamTexture = function(texture, cb) --scaleform
+    if not HasStreamedTextureDictLoaded(texture) then
+        RequestStreamedTextureDict(texture)
+    end
+    cb()
+end
+
